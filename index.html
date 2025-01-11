@@ -126,21 +126,103 @@
             50% { text-shadow: 0 0 20px rgba(255, 142, 83, 0.8); }
             100% { text-shadow: 0 0 10px rgba(255, 107, 107, 0.5); }
         }
+
+        /* Sparks Animation */
+        .sparks-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: sparksFly 0.8s linear forwards;
+            opacity: 0;
+        }
+
+        .web-name-animation {
+            opacity: 0;
+            animation: titleReveal 1.5s forwards 0.5s,
+                       glowPulse 2s infinite 2s;
+            background: linear-gradient(45deg, #ff3131, #ff7676);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 49, 49, 0.5);
+            position: relative;
+        }
+
+        @keyframes sparksFly {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes titleReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+                filter: blur(10px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes glowPulse {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 49, 49, 0.5),
+                             0 0 20px rgba(255, 49, 49, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 49, 49, 0.8),
+                             0 0 30px rgba(255, 49, 49, 0.5),
+                             0 0 40px rgba(255, 49, 49, 0.3);
+            }
+            100% {
+                text-shadow: 0 0 10px rgba(255, 49, 49, 0.5),
+                             0 0 20px rgba(255, 49, 49, 0.3);
+            }
+        }
+
+        .loading-overlay {
+            background: radial-gradient(circle, #1a0000, #000000);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
     <!-- Navigation Bar -->
     <nav class="bg-black py-3 px-4 fixed w-full top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="brand-font text-orange-500 text-3xl web-name-animation">AI Health Companion</a>
+            <a href="#" class="sparks-container">
+                <span class="brand-font text-3xl web-name-animation">AI Health Companion</span>
+            </a>
             <div class="space-x-4">
                 <a href="#" class="nav-link-custom animate__animated animate__fadeInDown">Diet & Calories</a>
                 <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.1s">Gym Trainer</a>
-                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.2s">Hydration Monitoring</a>
-                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.2s">Posture Alert</a>
-                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.2s">Mood Analysis</a>
-                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.2s">Sleep Tracker</a>
-                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.2s">HealthCare Chatbot</a>
+                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.2s">Hydration Monitor</a>
+                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.3s">Posture Alert</a>
+                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.4s">Mood Analysis</a>
+                <a href="#" class="nav-link-custom animate__animated animate__fadeInDown" style="animation-delay: 0.5s">Sleep Tracker</a>
             </div>
         </div>
     </nav>
@@ -439,6 +521,64 @@
         };
 
         window.addEventListener('scroll', animateOnScroll);
+    </script>
+
+    <!-- Enhanced loading and sparks animation -->
+    <script>
+        // Enhanced loading and sparks animation
+        window.addEventListener('load', () => {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const title = document.querySelector('.web-name-animation');
+            
+            // Create sparks
+            function createSparks() {
+                const sparksContainer = document.querySelector('.sparks-container');
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const spark = document.createElement('div');
+                        spark.className = 'spark';
+                        
+                        // Random position around the title
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = 50 + Math.random() * 100;
+                        spark.style.left = `calc(50% + ${Math.cos(angle) * distance}px)`;
+                        spark.style.top = `calc(50% + ${Math.sin(angle) * distance}px)`;
+                        
+                        sparksContainer.appendChild(spark);
+                        
+                        // Remove spark after animation
+                        setTimeout(() => spark.remove(), 800);
+                    }, i * 40);
+                }
+            }
+
+            setTimeout(() => {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    
+                    // Initial sparks
+                    createSparks();
+                    
+                    // Repeat sparks every few seconds
+                    setInterval(createSparks, 5000);
+                    
+                    // Animate navigation links
+                    document.querySelectorAll('.nav-link-custom').forEach((link, index) => {
+                        link.style.opacity = '0';
+                        setTimeout(() => {
+                            link.style.opacity = '1';
+                            link.classList.add('animate__animated', 'animate__fadeInDown');
+                        }, 1000 + (index * 100));
+                    });
+                }, 500);
+            }, 1500);
+        });
+
+        // Add hover effect for sparks
+        document.querySelector('.sparks-container').addEventListener('mouseenter', function() {
+            createSparks();
+        });
     </script>
 </body>
 </html>
